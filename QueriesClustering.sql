@@ -15,11 +15,12 @@ group by cat.Nombre
 go
 
 --CATEGORIA CON TOTAL DE PARTES VENDIDAS
-select cat.Nombre as NombreCategoria, sum(Do.cantidad) as Cantidad
+select cat.Nombre as NombreCategoria,
+sum(Do.cantidad) as Cantidad, sum(p.Precio*Do.Cantidad) as TotalVentas
 from Orden O inner join Detalle_orden DO on(DO.ID_Orden=O.ID_Orden)
-						inner join Partes P on (P.ID_Parte=DO.ID_Parte)
-						inner join Categoria Cat on (p.ID_Categoria = cat.ID_Categoria)
-						group by Cat.Nombre
+inner join Partes P on (P.ID_Parte=DO.ID_Parte)
+inner join Categoria Cat on (p.ID_Categoria = cat.ID_Categoria)
+group by Cat.Nombre
 go
 
 --CATEGORIA CON CANTIDAD DE DESCUENTOS APLLICADOS
@@ -109,8 +110,8 @@ go
 
 --CATEGORIA CON CANDIDAD DE STATUS POR COTIZACION
 select cat.Nombre as NombreCategoria, 
-SUM(CASE WHEN co.status = 'Quote' THEN 1 ELSE 0 END) as Quote,
-SUM(CASE WHEN co.status = 'Order' THEN 1 ELSE 0 END) as 'Order'
+SUM(CASE WHEN co.status = 'Quote' THEN 1 ELSE 0 END) as StatusQuote,
+SUM(CASE WHEN co.status = 'Order' THEN 1 ELSE 0 END) as StatusOrder
 from Cotizacion co inner join
 CotizacionDetalle cod on cod.IDCotizacion = co.IDCotizacion inner join
 Partes P on P.ID_Parte = cod.ID_Parte INNER JOIN
@@ -118,13 +119,12 @@ Categoria cat on Cat.ID_Categoria = p.ID_Categoria
 group by cat.Nombre
 go
 
---CATEGORIA CON CANDIDAD DE PROCESADOPOR POR COTIZACION
+--CATEGORIA CON CANTIDAD DE PROCESADO POR POR COTIZACION
 select cat.Nombre as NombreCategoria, 
 SUM(CASE WHEN co.ProcesadoPor = 'Servicio de Integracion' THEN 1 ELSE 0 END) as ServiciodeIntegracion,
 SUM(CASE WHEN co.ProcesadoPor = 'Aseguradora' THEN 1 ELSE 0 END) as Aseguradora,
 SUM(CASE WHEN co.ProcesadoPor = 'Planta de Reparacion' THEN 1 ELSE 0 END) as PlantadeReparacion,
-SUM(CASE WHEN co.ProcesadoPor = 'Call center' THEN 1 ELSE 0 END) as CallCenter,
-SUM(CASE WHEN co.ProcesadoPor = null THEN 1 ELSE 0 END) as SinProcesar
+SUM(CASE WHEN co.ProcesadoPor = 'Call center' THEN 1 ELSE 0 END) as CallCenter
 from Cotizacion co inner join
 CotizacionDetalle cod on cod.IDCotizacion = co.IDCotizacion inner join
 Partes P on P.ID_Parte = cod.ID_Parte INNER JOIN
@@ -144,7 +144,9 @@ group by cat.Nombre
 go
 
 --CATEGORIA CON CANTIDAD DE PARTES COTIZADAS POR COTIZACION
-select cat.Nombre as NombreCategoria, SUM(cod.Cantidad) as Cantidad
+select cat.Nombre as NombreCategoria,
+SUM(cod.Cantidad) as Cantidad,
+sum(p.Precio*cod.Cantidad) as TotalPorParte
 from Cotizacion co inner join
 CotizacionDetalle cod on cod.IDCotizacion = co.IDCotizacion inner join
 Partes P on P.ID_Parte = cod.ID_Parte INNER JOIN
