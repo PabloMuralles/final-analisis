@@ -1,4 +1,4 @@
-CREATE VIEW VW_PorcentaEncimaPromedio
+CREATE VIEW VW_PorcentajeDescuentoEncimaPromedio
 as
 select pt.ID_Parte, pt.ID_Categoria, ci.Nombre, 
 TotalEncimaPromedio = CASE WHEN (dc.PorcentajeDescuento/
