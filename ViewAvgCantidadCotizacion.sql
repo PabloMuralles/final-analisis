@@ -1,4 +1,4 @@
-CREATE VIEW VW_CantidadCotizacionEncimaPromedio
+CREATE or alter VIEW VW_CantidadCotizacionEncimaPromedio
 as
 select pa.ID_Categoria, pa.ID_Parte, pr.Ciudad, TotalEncimaPromedio = CASE WHEN (cod.Cantidad/
 (SELECT AVG(cod2.Cantidad)
