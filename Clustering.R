@@ -19,26 +19,30 @@ con <- dbConnect(odbc(),
 
 #############################Dataframe##########################################
 
-##CANTIDAD DE STATUS POR ORDEN
+##CATEGORIA CON CANDIDAD DE STATUS POR ORDEN
 dfOrdenesStatus <- dbGetQuery(conn = con,
-                              "select SO.NombreStatus as NombreEstatus,
-sum(Do.cantidad) as Cantidad, sum(p.Precio*Do.Cantidad) as TotalVentas,
-avg(DO.cantidad) as PromedioPartesCotizadas
+                              "select cat.Nombre as NombreCategoria, 
+SUM(CASE WHEN SO.ID_StatusOrden = 1 THEN 1 ELSE 0 END) as Procesado,
+SUM(CASE WHEN SO.ID_StatusOrden = 2 THEN 1 ELSE 0 END) as Cancelado,
+SUM(CASE WHEN SO.ID_StatusOrden = 3 THEN 1 ELSE 0 END) as Recibido,
+SUM(CASE WHEN SO.ID_StatusOrden = 4 THEN 1 ELSE 0 END) as Enviado,
+SUM(CASE WHEN SO.ID_StatusOrden = 5 THEN 1 ELSE 0 END) as Pagado,
+SUM(CASE WHEN SO.ID_StatusOrden = 6 THEN 1 ELSE 0 END) as Ingresado
 from Orden O left join
 StatusOrden SO on O.ID_StatusOrden = SO.ID_StatusOrden inner join
 Detalle_orden DO on DO.ID_Orden = O.ID_Orden inner join
-Partes P on P.ID_Parte = DO.ID_Parte
-group by so.NombreStatus"
+Partes P on P.ID_Parte = DO.ID_Parte INNER JOIN
+Categoria cat on Cat.ID_Categoria = p.ID_Categoria
+group by cat.Nombre"
 )
 
-rownames(dfOrdenesStatus) <- dfOrdenesStatus$NombreEstatus
-dfOrdenesStatus$NombreEstatus <- NULL
+rownames(dfOrdenesStatus) <- dfOrdenesStatus$NombreCategoria
+dfOrdenesStatus$NombreCategoria <- NULL
 
 ##CATEGORIA CON TOTAL DE PARTES VENDIDAS
 dfVentas <- dbGetQuery(conn = con,
                        "select cat.Nombre as NombreCategoria,
-sum(Do.cantidad) as Cantidad, sum(p.Precio*Do.Cantidad) as TotalVentas,
-avg(DO.cantidad) as PromedioPartesCotizadas
+sum(Do.cantidad) as Cantidad, sum(p.Precio*Do.Cantidad) as TotalVentas
 from Orden O inner join Detalle_orden DO on(DO.ID_Orden=O.ID_Orden)
 inner join Partes P on (P.ID_Parte=DO.ID_Parte)
 inner join Categoria Cat on (p.ID_Categoria = cat.ID_Categoria)
@@ -48,58 +52,110 @@ group by Cat.Nombre"
 rownames(dfVentas) <- dfVentas$NombreCategoria
 dfVentas$NombreCategoria <- NULL
 
-##CANTIDAD DE DESCUENTOS APLICADOS
+##CATEGORIA CON CANTIDAD DE DESCUENTOS APLLICADOS
 dfDescuento <- dbGetQuery(conn = con,
-                          "select CASE WHEN de.NombreDescuento is null THEN 'Sin descuento'
-ELSE de.NombreDescuento END as NombreDescuento,
-sum(Do.cantidad) as Cantidad, sum(p.Precio*Do.Cantidad) as TotalVentas,
-avg(DO.cantidad) as PromedioPartesCotizadas
+                          "select cat.Nombre as NombreCategoria, 
+SUM(CASE WHEN De.ID_Descuento = 1 THEN 1 ELSE 0 END) as PromocionTrupebistor,
+SUM(CASE WHEN De.ID_Descuento = 2 THEN 1 ELSE 0 END) as PromocionQwicador,
+SUM(CASE WHEN De.ID_Descuento = 3 THEN 1 ELSE 0 END) as PromocionThrunipaquar,
+SUM(CASE WHEN De.ID_Descuento = 4 THEN 1 ELSE 0 END) as PromocionInzapefax,
+SUM(CASE WHEN De.ID_Descuento = 5 THEN 1 ELSE 0 END) as PromocionUperollan,
+SUM(CASE WHEN De.ID_Descuento = 6 THEN 1 ELSE 0 END) as PromocionMonvenplin,
+SUM(CASE WHEN De.ID_Descuento = 7 THEN 1 ELSE 0 END) as PromocionEndwerpower,
+SUM(CASE WHEN De.ID_Descuento = 8 THEN 1 ELSE 0 END) as PromocionRebanazz,
+SUM(CASE WHEN De.ID_Descuento = 9 THEN 1 ELSE 0 END) as PromocionLomrobover,
+SUM(CASE WHEN De.ID_Descuento = 10 THEN 1 ELSE 0 END) as PromocionQwinipilor,
+SUM(CASE WHEN De.ID_Descuento = 11 THEN 1 ELSE 0 END) as PromocionRetuman,
+SUM(CASE WHEN De.ID_Descuento = 12 THEN 1 ELSE 0 END) as PromocionEmmunazz,
+SUM(CASE WHEN De.ID_Descuento = 13 THEN 1 ELSE 0 END) as PromocionLompebinar,
+SUM(CASE WHEN De.ID_Descuento = 14 THEN 1 ELSE 0 END) as PromocionMonquestilin,
+SUM(CASE WHEN De.ID_Descuento = 15 THEN 1 ELSE 0 END) as PromocionIntinaquor,
+SUM(CASE WHEN De.ID_Descuento = 16 THEN 1 ELSE 0 END) as PromocionLomcadazz,
+SUM(CASE WHEN De.ID_Descuento = 17 THEN 1 ELSE 0 END) as PromocionRapcadantor,
+SUM(CASE WHEN De.ID_Descuento = 18 THEN 1 ELSE 0 END) as PromocionGrohupanar,
+SUM(CASE WHEN De.ID_Descuento = 19 THEN 1 ELSE 0 END) as PromocionFrokilistor,
+SUM(CASE WHEN De.ID_Descuento = 20 THEN 1 ELSE 0 END) as PromocionWinwerpegax,
+SUM(CASE WHEN De.ID_Descuento = 21 THEN 1 ELSE 0 END) as PromocionTupkililin,
+SUM(CASE WHEN De.ID_Descuento = 22 THEN 1 ELSE 0 END) as PromocionMonsipadin,
+SUM(CASE WHEN De.ID_Descuento = 23 THEN 1 ELSE 0 END) as PromocionFrosipamin,
+SUM(CASE WHEN De.ID_Descuento = 24 THEN 1 ELSE 0 END) as PromocionGrocadazz,
+SUM(CASE WHEN De.ID_Descuento = 25 THEN 1 ELSE 0 END) as PromocionUnwerpin
 from Orden O inner join
 Detalle_orden DO on DO.ID_Orden = O.ID_Orden left join
 Descuento De on DO. ID_Descuento= De.ID_Descuento join
-Partes P on P.ID_Parte = DO.ID_Parte
-group by de.NombreDescuento"
+Partes P on P.ID_Parte = DO.ID_Parte INNER JOIN
+Categoria cat on Cat.ID_Categoria = p.ID_Categoria
+group by cat.Nombre"
 )
 
-rownames(dfDescuento) <- dfDescuento$NombreDescuento
-dfDescuento$NombreDescuento <- NULL
+rownames(dfDescuento) <- dfDescuento$NombreCategoria
+dfDescuento$NombreCategoria <- NULL
 
+##CATEGORIA POR CANTIDAD DE GENERO
+dfGenero <- dbGetQuery(conn = con,
+                       "select cat.Nombre as NombreCategoria, 
+SUM(CASE WHEN Cli.Genero = 'M' THEN 1 ELSE 0 END) as M,
+SUM(CASE WHEN Cli.Genero = 'F' THEN 1 ELSE 0 END) as F
+from Orden O inner join
+Detalle_orden DO on DO.ID_Orden = O.ID_Orden inner join
+Partes P on P.ID_Parte = DO.ID_Parte INNER JOIN
+Categoria cat on Cat.ID_Categoria = p.ID_Categoria inner join
+Clientes Cli on O.ID_Cliente = Cli.ID_Cliente
+group by cat.Nombre"
+)
+
+rownames(dfGenero) <- dfGenero$NombreCategoria
+dfGenero$NombreCategoria <- NULL
 
 ##CATEGORIA CON TOTAL DE PARTES VENDIDAS Y GENERO DEL CLIENTE
 dfGeneroCantidad <- dbGetQuery(conn = con,
-                               "select cat.Nombre as NombreCategoria, sum(Do.cantidad) as CantidadTotal,
+                               "select cat.Nombre as NombreCategoria, sum(Do.cantidad) as CantidadTotal, 
 sum(CASE WHEN Cli.Genero = 'M' THEN DO.Cantidad ELSE 0 END) as CantidadGeneroM,
 sum(CASE WHEN Cli.Genero = 'F' THEN DO.Cantidad ELSE 0 END) as CantidadGeneroF
 from Orden O inner join Detalle_orden DO on(DO.ID_Orden=O.ID_Orden)
-inner join Partes P on (P.ID_Parte=DO.ID_Parte)
-inner join Categoria Cat on (p.ID_Categoria = cat.ID_Categoria)
-inner join Clientes Cli on O.ID_Cliente = Cli.ID_Cliente
-group by Cat.Nombre"
+						inner join Partes P on (P.ID_Parte=DO.ID_Parte)
+						inner join Categoria Cat on (p.ID_Categoria = cat.ID_Categoria)
+						inner join Clientes Cli on O.ID_Cliente = Cli.ID_Cliente
+						group by Cat.Nombre"
 )
 
 rownames(dfGeneroCantidad) <- dfGeneroCantidad$NombreCategoria
 dfGeneroCantidad$NombreCategoria <- NULL
 
 
-##VENTAS POR PAIS
+##CATEGORIA CON PAIS
 dfPais <- dbGetQuery(conn = con,
-                     "select p.Nombre as NombrePais,
-sum(Do.cantidad) as Cantidad, sum(pt.Precio*Do.Cantidad) as TotalVentas,
-avg(DO.cantidad) as PromedioPartesCotizadas
+                     "select cat.Nombre as NombreCategoria, 
+SUM(CASE WHEN p.ID_Pais = 1 THEN 1 ELSE 0 END) as Jamaica,
+SUM(CASE WHEN p.ID_Pais = 2 THEN 1 ELSE 0 END) as Panama,
+SUM(CASE WHEN p.ID_Pais = 3 THEN 1 ELSE 0 END) as Brasil,
+SUM(CASE WHEN p.ID_Pais = 4 THEN 1 ELSE 0 END) as Guatemala,
+SUM(CASE WHEN p.ID_Pais = 5 THEN 1 ELSE 0 END) as Mexico,
+SUM(CASE WHEN p.ID_Pais = 6 THEN 1 ELSE 0 END) as Nicaragua,
+SUM(CASE WHEN p.ID_Pais = 7 THEN 1 ELSE 0 END) as ElSalvador,
+SUM(CASE WHEN p.ID_Pais = 8 THEN 1 ELSE 0 END) as Colombia,
+SUM(CASE WHEN p.ID_Pais = 9 THEN 1 ELSE 0 END) as Argentina,
+SUM(CASE WHEN p.ID_Pais = 10 THEN 1 ELSE 0 END) as España,
+SUM(CASE WHEN p.ID_Pais = 11 THEN 1 ELSE 0 END) as EstadosUnidos,
+SUM(CASE WHEN p.ID_Pais = 12 THEN 1 ELSE 0 END) as CostaRica,
+SUM(CASE WHEN p.ID_Pais = 13 THEN 1 ELSE 0 END) as Belice,
+SUM(CASE WHEN p.ID_Pais = 14 THEN 1 ELSE 0 END) as Honduras,
+SUM(CASE WHEN p.ID_Pais = 15 THEN 1 ELSE 0 END) as Canada
 from Orden O inner join
 Detalle_orden DO on DO.ID_Orden = O.ID_Orden inner join
 Ciudad c on c.ID_Ciudad = o.ID_Ciudad inner join
 Region r on r.ID_Region = c.ID_Region inner join
 Pais p on p.ID_Pais = r.ID_Pais inner join
-Partes Pt on Pt.ID_Parte = DO.ID_Parte
-group by p.Nombre"
+Partes Pt on Pt.ID_Parte = DO.ID_Parte INNER JOIN
+Categoria cat on Cat.ID_Categoria = pt.ID_Categoria
+group by cat.Nombre"
 )
 
-rownames(dfPais) <- dfPais$NombrePais
-dfPais$NombrePais <- NULL
+rownames(dfPais) <- dfPais$NombreCategoria
+dfPais$NombreCategoria <- NULL
 
 
-##CATEGORIA CON CANTIDAD DE STATUS POR COTIZACION
+##CATEGORIA CON CANDIDAD DE STATUS POR COTIZACION
 dfStatusCotizacion <- dbGetQuery(conn = con,
                                  "select cat.Nombre as NombreCategoria, 
 SUM(CASE WHEN co.status = 'Quote' THEN 1 ELSE 0 END) as StatusQuote,
@@ -114,20 +170,22 @@ group by cat.Nombre"
 rownames(dfStatusCotizacion) <- dfStatusCotizacion$NombreCategoria
 dfStatusCotizacion$NombreCategoria <- NULL
 
-##CANTIDAD DE PROCESADO POR POR COTIZACION
+##CATEGORIA CON CANTIDAD DE PROCESADO POR POR COTIZACION
 dfCotizacionesProcesadas <- dbGetQuery(conn = con,
-                                       "select CASE WHEN co.ProcesadoPor is null
-THEN 'Sin procesadorPor' ELSE co.ProcesadoPor END as NombreProcesado, 
-sum(cod.cantidad) as Cantidad, sum(p.Precio*cod.Cantidad) as TotalVentas,
-avg(cod.cantidad) as PromedioPartesCotizadas
+                                       "select cat.Nombre as NombreCategoria, 
+SUM(CASE WHEN co.ProcesadoPor = 'Servicio de Integracion' THEN 1 ELSE 0 END) as ServiciodeIntegracion,
+SUM(CASE WHEN co.ProcesadoPor = 'Aseguradora' THEN 1 ELSE 0 END) as Aseguradora,
+SUM(CASE WHEN co.ProcesadoPor = 'Planta de Reparacion' THEN 1 ELSE 0 END) as PlantadeReparacion,
+SUM(CASE WHEN co.ProcesadoPor = 'Call center' THEN 1 ELSE 0 END) as CallCenter
 from Cotizacion co inner join
 CotizacionDetalle cod on cod.IDCotizacion = co.IDCotizacion inner join
-Partes P on P.ID_Parte = cod.ID_Parte
-group by co.ProcesadoPor"
+Partes P on P.ID_Parte = cod.ID_Parte INNER JOIN
+Categoria cat on Cat.ID_Categoria = p.ID_Categoria
+group by cat.Nombre"
 )
 
-rownames(dfCotizacionesProcesadas) <- dfCotizacionesProcesadas$NombreProcesado
-dfCotizacionesProcesadas$NombreProcesado <- NULL
+rownames(dfCotizacionesProcesadas) <- dfCotizacionesProcesadas$NombreCategoria
+dfCotizacionesProcesadas$NombreCategoria <- NULL
 
 ##CATEGORIA CON CANTIDAD DE ORDENENES REALIZADAS POR COTIZACION
 dfOrdenRealizadoCotizacion <- dbGetQuery(conn = con,
@@ -164,7 +222,7 @@ dfPartesCotizadas$NombreCategoria <- NULL
 #######################################Clusters####################################
 set.seed(123)
 
-##CANTIDAD DE STATUS POR ORDEN
+##CATEGORIA CON CANDIDAD DE STATUS POR ORDEN
 OrdenStatus <- scale(dfOrdenesStatus) #Coloca a escala el df segun la media
 OrdenStatus <- na.omit(OrdenStatus) #Omite los null al aplicar la escala
 
@@ -270,7 +328,7 @@ ggplot(ventastst, aes(x="",y=TotalVentas, fill=clustno)) +
 
 
 
-##CANTIDAD DE DESCUENTOS APLICADOS
+##CATEGORIA CON CANTIDAD DE DESCUENTOS APLLICADOS
 descuento <- scale(dfDescuento) #Coloca a escala el df segun la media
 descuento <- na.omit(descuento) #Omite los null al aplicar la escala
 
@@ -303,6 +361,52 @@ descuentotst <- subset(descuentotst, select =-c(Row.names))
 descuentotst <- aggregate(descuentotst, by=list(descuentotst$clustno), FUN = mean)
 
 fviz_cluster(clusterk7descuento, data = descuento, labelsize = 0, pointsize = 0)
+
+
+
+
+##CATEGORIA POR CANTIDAD DE GENERO
+
+genero <- scale(dfGenero) #Coloca a escala el df segun la media
+genero <- na.omit(genero) #Omite los null al aplicar la escala
+
+clusterk2genero <- kmeans(genero, 2, nstart = 25)
+clusterk3genero <- kmeans(genero, 3, nstart = 25)
+clusterk4genero <- kmeans(genero, 4, nstart = 25)
+clusterk5genero <- kmeans(genero, 5, nstart = 25)
+
+grafica1genero <- fviz_cluster(clusterk2genero, geom = "point", data = genero) + ggtitle("k2")
+grafica2genero <- fviz_cluster(clusterk3genero, geom = "point", data = genero) + ggtitle("k3")
+grafica3genero <- fviz_cluster(clusterk4genero, geom = "point", data = genero) + ggtitle("k4")
+grafica4genero <- fviz_cluster(clusterk5genero, geom = "point", data = genero) + ggtitle("k5")
+
+grid.arrange(grafica1genero,
+             grafica2genero,
+             grafica3genero,
+             grafica4genero, nrow = 2)
+
+fviz_nbclust(genero, kmeans, method = "wss") +
+  geom_vline(xintercept = 4, linetype = 2)
+
+generoCluster <- as.data.frame(clusterk4genero$cluster)
+generoRaw <- dfGenero
+
+generotst <- merge(generoCluster, generoRaw, by=0, all=TRUE)
+
+names(generotst)[2]<-"clustno"
+generotst <- subset(generotst, select =-c(Row.names))
+
+generotst <- aggregate(generotst, by=list(generotst$clustno), FUN = mean)
+
+fviz_cluster(clusterk4genero, data = genero, labelsize = 0, pointsize = 0)
+
+ggplot(generotst, aes(x="",y=M, fill=clustno)) +
+  geom_bar(stat="identity", width = 1)+
+  coord_polar("y", start = 0)
+
+ggplot(generotst, aes(x="",y=F, fill=clustno)) +
+  geom_bar(stat="identity", width = 1)+
+  coord_polar("y", start = 0)
 
 
 
@@ -356,7 +460,7 @@ ggplot(generoCantidadtst, aes(x="",y=CantidadTotal, fill=clustno)) +
   coord_polar("y", start = 0)
 
 
-##VENTAS POR PAIS
+##CATEGORIA CON PAIS
 
 pais <- scale(dfPais) #Coloca a escala el df segun la media
 pais <- na.omit(pais) #Omite los null al aplicar la escala
@@ -452,7 +556,7 @@ ggplot(statusCotizaciontst, aes(x="",y=StatusOrder, fill=clustno)) +
 
 
 
-##CANTIDAD DE PROCESADO POR POR COTIZACION
+##CATEGORIA CON CANTIDAD DE PROCESADO POR POR COTIZACION
 
 
 cotizacionesProcesadas <- scale(dfCotizacionesProcesadas) #Coloca a escala el df segun la media
