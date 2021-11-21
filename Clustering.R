@@ -362,6 +362,18 @@ descuentotst <- aggregate(descuentotst, by=list(descuentotst$clustno), FUN = mea
 
 fviz_cluster(clusterk7descuento, data = descuento, labelsize = 0, pointsize = 0)
 
+ggplot(descuentotst, aes(x="",y=PromocionTrupebistor, fill=clustno)) +
+  geom_bar(stat="identity", width = 1)+
+  coord_polar("y", start = 0)
+
+ggplot(descuentotst, aes(x="",y=PromocionQwicador, fill=clustno)) +
+  geom_bar(stat="identity", width = 1)+
+  coord_polar("y", start = 0)
+
+ggplot(descuentotst, aes(x="",y=PromocionThrunipaquar, fill=clustno)) +
+  geom_bar(stat="identity", width = 1)+
+  coord_polar("y", start = 0)
+
 
 
 
