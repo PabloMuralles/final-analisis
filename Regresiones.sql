@@ -15,8 +15,18 @@ select O.Total_Orden, V.Anio, V.Marca, V.Modelo
 from Orden O inner join Detalle_orden De on O.ID_Orden = De.ID_Orden 
 				inner join Vehiculo V on De.VehiculoID=V.VehiculoID
 
---total orden con status orden y descuento
-select O.Total_Orden, D.NombreDescuento, S.NombreStatus 
+--total orden con status orden 
+select O.Total_Orden, S.NombreStatus 
 from Orden O inner join Detalle_orden De on O.ID_Orden = De.ID_Orden 
-				inner join Descuento D on De.ID_Descuento = D.ID_Descuento
 				inner join StatusOrden S on S.ID_StatusOrden = O.ID_StatusOrden
+
+--total orden por genero
+select o.Total_Orden, C.Genero
+from Orden O inner join Clientes C on c.ID_Cliente = o.ID_Cliente
+
+				
+---descuento por parte
+select D.PorcentajeDescuento, P.Nombre as NombreParte
+from Orden O inner join Detalle_orden De on O.ID_Orden=De.ID_Orden  
+				inner join Descuento D on D.ID_Descuento=De.ID_Descuento
+				inner join Partes P on P.ID_Parte=De.ID_Parte
